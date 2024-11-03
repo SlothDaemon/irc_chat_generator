@@ -57,6 +57,6 @@ and the participating users.
 
 Alternatives for these commands are documented at the top of the script as the indicator constants.
 
-An example IRC chat logis provided in this repository for you to peruse.
+An example IRC chat log is provided in this repository for you to peruse.
 
 Happy typing!
