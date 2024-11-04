@@ -7,6 +7,7 @@ LEFT_INDICATORS = ["_left", "_l", "ll", "/left"]
 RIGHT_INDICATORS = ["_right", "_r", "rr", "/right"]
 EXIT_INDICATORS = ["exit()", "exit", "ee", "/exit"]
 CLEAR_INDICATORS = ["clear()", "clear", "cls", "/clear"]
+BAN_INDICATORS = ["/ban"]
 
 
 def clear_line() -> None:
@@ -118,6 +119,12 @@ class ChatLog:
         filename += "_logs.txt"
         return filename
 
+    def add_directly(self, message: str) -> None:
+        """
+        Adds a message to the l;og directly, with no further additions.
+        """
+        self.logs.append(message)
+
     def add(self, user: User, time: datetime, message: str) -> None:
         """
         Stores a message as they were printed to stdout in the chat log.
@@ -139,6 +146,19 @@ class ChatLog:
             as_str += i + "\n"
         with open(self.filename, "a") as file:
             file.write(as_str)
+
+
+def ban_user(
+    logs: ChatLog, irc_time: datetime, admin: User, received_input: str
+) -> None:
+    """
+    Logs a message banning a user.
+    NB: This does not actually remove them from the registered Users.
+    """
+    _, user, time, reason = received_input.split(" ", maxsplit=3)
+    message = f"[{irc_time.strftime(TIME_FORMAT)}] {admin} has banned {user} for {time} days the following reason: {reason}"
+    logs.add_directly(message)
+    print(message)
 
 
 def main():
@@ -231,6 +251,13 @@ def main():
             clear_line()
             logs.dump()
             exit()
+        elif parsed_input[:4] in BAN_INDICATORS:
+            ban_user(
+                logs=logs,
+                irc_time=irc_time,
+                admin=current_user,
+                received_input=received_input,
+            )
         else:
             logs.add(user=current_user, time=irc_time, message=received_input)
 
