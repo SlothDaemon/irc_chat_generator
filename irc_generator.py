@@ -144,7 +144,7 @@ class ChatLog:
         as_str = ""
         for i in self.logs:
             as_str += i + "\n"
-        with open(self.filename, "a") as file:
+        with open(self.filename, "w", encoding="utf8") as file:
             file.write(as_str)
 
 
